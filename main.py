@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
         best_archit, best_optim, best_optim_config, best_lossfunc = best_result['model']
         open(architecture_file, 'w').write(best_archit)
-        cPickle.dump((best_optim, best_optim_config, best_lossfunc),open(optimizer_file,'wb') )
+        pickle.dump((best_optim, best_optim_config, best_lossfunc),open(optimizer_file,'wb') )
 
     if args.train:
         ### Training

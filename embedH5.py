@@ -48,9 +48,9 @@ def convert(infile,labelfile,outfile,mapper,worddim,batchsize,labelname,dataname
             if isseq:
                 seqdata.append(list(x.strip().split()[1]))
             else:
-                seqdata.append(map(float,x.strip().split()))
+                seqdata.append(list(map(float,x.strip().split())))
             #label.append(float(y.strip()))
-            label.append(map(float,y.strip().split()))
+            label.append(list(map(float,y.strip().split())))
             cnt = (cnt+1)% batchsize
             if cnt == 0:
                 batchnum = batchnum + 1
@@ -82,7 +82,7 @@ def convert_siamese(infile1,infile2,labelfile,outfile,mapper,worddim,batchsize,l
         seqdata2 = []
         label = []
         batchnum = 0
-        for x1,x2,y in izip(seqfile1,seqfile2,labelfile):
+        for x1,x2,y in zip(seqfile1,seqfile2,labelfile):
             seqdata1.append(list(x1.strip().split()[1]))
             seqdata2.append(list(x2.strip().split()[1]))
             #label.append(float(y.strip()))
@@ -143,7 +143,6 @@ if __name__ == "__main__":
     outdir = dirname(args.outfile)
     if not exists(outdir):
         makedirs(outdir)
-
     if args.mapperfile == "":
         args.mapper = {'A':[1,0,0,0],'C':[0,1,0,0],'G':[0,0,1,0],'T':[0,0,0,1],'N':[0,0,0,0]}
     else:

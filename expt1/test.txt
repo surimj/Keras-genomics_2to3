@@ -1,0 +1,4 @@
+/data/expt1/test.h5.batch1
+/data/expt1/test.h5.batch2
+/data/expt1/test.h5.batch3
+/data/expt1/test.h5.batch4

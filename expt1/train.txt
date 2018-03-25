@@ -1,0 +1,16 @@
+/data/expt1/train.h5.batch1
+/data/expt1/train.h5.batch2
+/data/expt1/train.h5.batch3
+/data/expt1/train.h5.batch4
+/data/expt1/train.h5.batch5
+/data/expt1/train.h5.batch6
+/data/expt1/train.h5.batch7
+/data/expt1/train.h5.batch8
+/data/expt1/train.h5.batch9
+/data/expt1/train.h5.batch10
+/data/expt1/train.h5.batch11
+/data/expt1/train.h5.batch12
+/data/expt1/train.h5.batch13
+/data/expt1/train.h5.batch14
+/data/expt1/train.h5.batch15
+/data/expt1/train.h5.batch16
