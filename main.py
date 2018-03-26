@@ -67,7 +67,7 @@ def load_model(weightfile2load=None):
     model = model_from_json(open(architecture_file).read())
     if weightfile2load:
         model.load_weights(weightfile2load)
-    best_optim, best_optim_config, best_lossfunc = cPickle.load(open(optimizer_file, 'rb'))
+    best_optim, best_optim_config, best_lossfunc = ickle.load(open(optimizer_file, 'rb'))
     model.compile(loss=best_lossfunc, optimizer = best_optim.from_config(best_optim_config), metrics=['categorical_accuracy'])
     return model
 

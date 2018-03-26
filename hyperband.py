@@ -25,18 +25,18 @@ class Hyperband:
                                 'n_sample': self.probedata(join(datadir, 'valid.h5.batch'))[1]},
                                 }
 
-            self.datamode = datamode
-            self.max_iter = max_iter  	# maximum iterations per configuration
-            self.eta = eta			# defines configuration downsampling rate (default = 3)
+        self.datamode = datamode
+        self.max_iter = max_iter  	# maximum iterations per configuration
+        self.eta = eta			# defines configuration downsampling rate (default = 3)
 
-            self.logeta = lambda x: log( x ) / log( self.eta )
-            self.s_max = int( self.logeta( self.max_iter ))
-            self.B = ( self.s_max + 1 ) * self.max_iter
+        self.logeta = lambda x: log( x ) / log( self.eta )
+        self.s_max = int( self.logeta( self.max_iter ))
+        self.B = ( self.s_max + 1 ) * self.max_iter
 
-            self.results = []	# list of dicts
-            self.counter = 0
-            self.best_loss = np.inf
-            self.best_counter = -1
+        self.results = []	# list of dicts
+        self.counter = 0
+        self.best_loss = np.inf
+        self.best_counter = -1
 
 
 	# can be called multiple times
@@ -114,11 +114,17 @@ class Hyperband:
     		return self.results
 
     def readdata(self, dataprefix):
-                allfiles = subprocess.check_output('ls '+dataprefix+'*', shell=True).split('\n')[:-1]
+                allfiles = subprocess.check_output('ls '+dataprefix+'*', shell=True).split(b'\n')[:-1]
+                #allfiles = map(str,allfiles)
+                #print("allfiles",allfiles)
                 cnt = 0
                 samplecnt = 0
+                label = []
+                data = []
                 for x in allfiles:
-                    if  x.split(dataprefix)[1].isdigit():
+                    #print('x',x)
+                    if  x.split(bytes(dataprefix, encoding = "utf8"))[1].isdigit(): 
+                        #print('str(x)',str(x).split(dataprefix)[1].isdigit())
                         cnt += 1
                         dataall = h5py.File(x,'r')
                         if cnt == 1:
@@ -130,7 +136,7 @@ class Hyperband:
                 return (label,data)
 
     def BatchGenerator(self, mb_size, fileprefix):
-                allfiles = subprocess.check_output('ls '+fileprefix+'*', shell=True).split('\n')[:-1]
+                allfiles = subprocess.check_output('ls '+fileprefix+'*', shell=True).split(b'\n')[:-1]
                 cache = []
                 while True:
                     idx2use = np.random.permutation(range(len(allfiles)))
@@ -154,11 +160,11 @@ class Hyperband:
                             cache = [ data1[idx:],label[idx:] ]
 
     def probedata(self, dataprefix):
-                allfiles = subprocess.check_output('ls '+dataprefix+'*', shell=True).split('\n')[:-1]
+                allfiles = subprocess.check_output('ls '+dataprefix+'*', shell=True).split(b'\n')[:-1]
                 cnt = 0
                 samplecnt = 0
                 for x in allfiles:
-                    if  x.split(dataprefix)[1].isdigit():
+                    if  x.split(bytes(dataprefix, encoding = "utf8"))[1].isdigit():
                         cnt += 1
                         data = h5py.File(x,'r')
                         samplecnt += len(data['label'])

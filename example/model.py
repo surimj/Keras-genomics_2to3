@@ -4,6 +4,7 @@
 from os.path import join
 import subprocess, h5py
 from common_defs import *
+import numpy as np
 
 # a dict with x_train, y_train, x_test, y_test
 
@@ -40,11 +41,14 @@ def try_params( n_iterations, params, data=None, datamode='memory'):
 
     print ("iterations:", n_iterations)
     print_params( params )
+    #print(data)
     batchsize = 100
     if datamode == 'memory':
         X_train, Y_train = data['train']
         X_valid, Y_valid = data['valid']
-        inputshape = X_train.shape[1:]
+
+        #print(X_train)
+        inputshape = np.asarray(X_train).shape[1:]
     else:
         train_generator = data['train']['gen_func'](batchsize, data['train']['path'])
         valid_generator = data['valid']['gen_func'](batchsize, data['valid']['path'])
@@ -52,7 +56,8 @@ def try_params( n_iterations, params, data=None, datamode='memory'):
         valid_epoch_step = data['valid']['n_sample'] / batchsize
         inputshape = data['train']['gen_func'](batchsize, data['train']['path']).next()[0].shape[1:]
 
-        model = Sequential()
+    model = Sequential()
+    #print(inputshape)
     model.add(Conv2D(128, (1, 24), padding='same', input_shape=inputshape, activation='relu'))
     model.add(GlobalMaxPooling2D())
 
@@ -61,7 +66,7 @@ def try_params( n_iterations, params, data=None, datamode='memory'):
     model.add(Dense(2))
     model.add(Activation('softmax'))
 
-    ptim = Adadelta
+    optim = Adadelta
     myoptimizer = optim(epsilon=params['DELTA'], rho=params['MOMENT'])
     mylossfunc = 'categorical_crossentropy'
     model.compile(loss=mylossfunc, optimizer=myoptimizer,metrics=['accuracy'])
