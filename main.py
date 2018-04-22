@@ -9,7 +9,7 @@ from tempfile import mkdtemp
 from keras.callbacks import ModelCheckpoint,EarlyStopping
 from sklearn.metrics import accuracy_score,roc_auc_score
 from pprint import pprint
-
+from keras.utils import np_utils
 from hyperband import Hyperband
 
 cwd = dirname(realpath(__file__))
@@ -54,6 +54,8 @@ def train_func(model, weightfile2save):
     else:
         Y_train, traindata = hb.readdata(join(args.topdir, 'train.h5.batch'))
         Y_valid, validdata = hb.readdata(join(args.topdir, 'valid.h5.batch'))
+        Y_train = np_utils.to_categorical(Y_train, 2)
+        Y_valid = np_utils.to_categorical(Y_valid, 2)
         history_callback =  model.fit(
                 traindata,
                 Y_train,
@@ -67,7 +69,7 @@ def load_model(weightfile2load=None):
     model = model_from_json(open(architecture_file).read())
     if weightfile2load:
         model.load_weights(weightfile2load)
-    best_optim, best_optim_config, best_lossfunc = ickle.load(open(optimizer_file, 'rb'))
+    best_optim, best_optim_config, best_lossfunc = pickle.load(open(optimizer_file, 'rb'))
     model.compile(loss=best_lossfunc, optimizer = best_optim.from_config(best_optim_config), metrics=['categorical_accuracy'])
     return model
 
@@ -141,11 +143,12 @@ if __name__ == "__main__":
         testbatch_num, _ = hb.probedata(join(args.topdir, 'test.h5.batch'))
         test_generator = hb.BatchGenerator(None, join(args.topdir, 'test.h5.batch'))
         for _ in range(testbatch_num):
-            X_test, Y_test = test_generator.next()
+            X_test, Y_test = next(test_generator)
+            Y_test = np_utils.to_categorical(Y_test, 2)
             t_pred = model.predict(X_test)
             pred_for_evalidx += [x[args.evalidx] for x in t_pred]
             pred_bin += [np.argmax(x) for x in t_pred]
-            y_true = [np.argmax(x) for x in Y_test]
+            y_true += [np.argmax(x) for x in Y_test]
             y_true_for_evalidx += [x[args.evalidx] for x in Y_test]
 
         t_auc = roc_auc_score(y_true_for_evalidx, pred_for_evalidx)
